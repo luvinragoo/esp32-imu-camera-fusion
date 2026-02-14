@@ -1,0 +1,22 @@
+# Python
+*.pyc
+__pycache__/
+venv/
+.ipynb_checkpoints/
+
+# Data files (logs, images)
+*.csv
+*.log
+*.jpg
+*.png
+data/*.csv
+data/*.jpg
+
+# IDE files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# MicroPython
+*.mpy
