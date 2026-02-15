@@ -27,3 +27,13 @@ Multi-sensor data acquisition system combining MPU6050 IMU and OV3660 camera on 
 # Board: ESP32 Wrover Module
 # PSRAM: Enabled
 # Upload to ESP32
+``` 
+
+### Next Steps
+- [x] Port IMU code to Arduino C++
+
+- [ ] Design unified serial protocol
+
+- [ ] Synchronized timestamp logging
+
+- [ ] Jupyter visualization notebook

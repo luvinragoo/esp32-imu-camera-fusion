@@ -16,3 +16,7 @@ Thumbs.db
 
 # MicroPython
 *.mpy
+
+# Arduino libraries (install via Library Manager)
+esp32_firmware/libraries/
+
