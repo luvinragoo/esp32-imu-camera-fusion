@@ -1,25 +1,29 @@
 # ESP32 IMU + Camera Fusion
 
-Multi-sensor data logging and fusion system combining MPU-6050 IMU with ESP32-CAM for timestamped sensor streams and motion estimation.
+Multi-sensor data acquisition system combining MPU6050 IMU and OV3660 camera on ESP32-WROVER.
+
+## Current Status
+
+✅ **Camera (OV3660)** - Working in Arduino C++
+- 640x480 JPEG capture
+- Serial streaming to PC
+- Frame grabber script functional
+
+🚧 **IMU (MPU6050)** - In progress
+- MicroPython version working
+- Porting to Arduino C++ next
 
 ## Hardware
-- ESP32-WROVER development board
-- MPU-6050 6-axis IMU (accelerometer + gyroscope) via I2C
-- ESP32-CAM module
 
-## Project Structure
-- `esp32_firmware/` - MicroPython code for ESP32
-- `pc_scripts/` - Python scripts for PC-side data capture and visualization
-- `notebooks/` - Jupyter notebooks for sensor fusion analysis
-- `data/` - Sample data logs (not committed)
-
-## Status
-🚧 Work in progress (February 14, 2026)
-
-- [x] MPU-6050 streaming at ~18Hz with timestamps
-- [ ] Camera frame capture with sync
-- [ ] Python fusion notebook
-- [ ] Demo recording
+- **MCU:** ESP32-WROVER (Freenove board)
+- **Camera:** OV3660 (800x600 max)
+- **IMU:** MPU6050 (accelerometer + gyroscope)
 
 ## Quick Start
-_Coming soon_
+
+### 1. Flash Camera Firmware
+```bash
+# Open esp32_firmware/camera_test.ino in Arduino IDE
+# Board: ESP32 Wrover Module
+# PSRAM: Enabled
+# Upload to ESP32

@@ -4,13 +4,9 @@ __pycache__/
 venv/
 .ipynb_checkpoints/
 
-# Data files (logs, images)
-*.csv
-*.log
-*.jpg
-*.png
+# Data outputs
+data/captured_frames/*.jpg
 data/*.csv
-data/*.jpg
 
 # IDE files
 .vscode/
