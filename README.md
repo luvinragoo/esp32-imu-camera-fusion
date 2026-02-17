@@ -52,7 +52,7 @@ Wire components according to pin definitions in `esp32_firmware/camera_imu_fusio
 ```bash
 cd pc_scripts
 pip install -r ../requirements.txt
-python capture_fusion.py --port COM3 --duration 30
+python capture_fusion.py --port COM13 --duration 30
 ```
 ### 4. Analyze
 ```bash
