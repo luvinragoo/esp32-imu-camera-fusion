@@ -7,17 +7,20 @@ from pathlib import Path
 PORT = "COM13"
 BAUD = 921600
 
-# Create output folder
+# Create output folders
 script_dir = Path(__file__).parent  # pc_scripts/
 project_root = script_dir.parent     # esp32-imu-camera-fusion/
 output_dir  = project_root / "data" / "test_capture"
-output_dir .mkdir(exist_ok=True, parents=True)
+frames_dir = output_dir / "frames"
+output_dir.mkdir(exist_ok=True, parents=True)
+frames_dir.mkdir(exist_ok=True)
 
 # CSV file for IMU data
 imu_csv = output_dir / "imu_data.csv"
 
 print(f"Connecting to {PORT} at {BAUD} baud...")
 print(f"Saving IMU data to: {imu_csv}\n")
+print(f"Saving frames to: {frames_dir}\n")
 
 # Creating CSV file with header row
 with open(imu_csv, 'w', newline='') as f:
@@ -28,10 +31,11 @@ with open(imu_csv, 'w', newline='') as f:
 ser = serial.Serial(PORT,BAUD, timeout=2)
 time.sleep(2) 
 
-print("Connected! Reading data...")
+print("Connected! Capturing data...")
 print("Press Ctrl+C to stop\n")
 
 imu_count = 0 # Counter for IMU samples
+frame_count = 0 # Counter for frames
 
 try:
 
@@ -63,13 +67,49 @@ try:
 
             imu_count += 1
 
-            # Print progress every 10 samples
-            if imu_count % 10 == 0:
-                print(f"IMU samples saved: {imu_count}")
+            # Print progress every 50 samples
+            if imu_count % 50 == 0:
+                print(f"IMU: {imu_count} samples | Frames: {frame_count}")
 
-        else:
-            print(f"[Other] {line}")
+        elif line.startswith("FRAME,"):
+            #Parse: FRAME,timestamp,length
+            parts = line.split(',')
+            timestamp = int(parts[1])
+            length = int(parts[2])
+
+            print(f"\n Receiving frame {frame_count} (t={timestamp}ms, {length} bytes)...")
+
+            # Read the binary JPEG data
+            jpeg_data = ser.read(length)
+
+            # Check if we got all the data
+            if len(jpeg_data) == length:
+                # Create filename with timestamp
+                filename = f"frame_{frame_count:04d}_t{timestamp}.jpg"
+                filepath = frames_dir / filename
+
+                # Save as JPEG file (binary mode)
+                with open(filepath, 'wb') as f:
+                    f.write(jpeg_data)
+
+                print(f"Saved {filename}")
+                frame_count += 1
+
+                # Read the footer lines (empty + FRAME_END)
+                ser.readline() # Empty line
+                ser.readline() # FRAME_END
+            else:
+                print(f"❌ Incomplete frame! Got {len(jpeg_data)} bytes, expected {length}")
+
+        # Other messages
+        elif line in ["INIT_START", "IMU_READY", "CAMERA_READY", "INIT_COMPLETE"]:
+            print(f"🔧 {line}")
 
 except KeyboardInterrupt:
-    print("\nStopped! Saved {imu_count} IMU samples to {imu_csv}")
+    print(f"\n\n{'='*50}")
+    print(f"Stopped!")
+    print(f"IMU samples: {imu_count}")
+    print(f"Frames: {frame_count}")
+    print(f"Data saved to: {output_dir}")
+    print(f"{'='*50}")
     ser.close()
