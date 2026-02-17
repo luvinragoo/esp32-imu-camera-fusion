@@ -4,9 +4,8 @@ __pycache__/
 venv/
 .ipynb_checkpoints/
 
-# Data outputs
-data/captured_frames/*.jpg
-data/*.csv
+# Data outputs (all captured data)
+data/
 
 # IDE files
 .vscode/
@@ -19,4 +18,3 @@ Thumbs.db
 
 # Arduino libraries (install via Library Manager)
 esp32_firmware/libraries/
-
