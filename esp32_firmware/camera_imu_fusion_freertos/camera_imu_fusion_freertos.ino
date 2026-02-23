@@ -10,6 +10,7 @@
 #include "esp_camera.h"
 #include <Wire.h>
 #include <MPU6050_tockn.h>
+#include "wifi_udp.h"
 
 // ============================================
 // Camera Pin Definitions (Freenove ESP32-WROVER)
@@ -107,7 +108,20 @@ void setup() {
   
   serialMutex = xSemaphoreCreateMutex();
 
+  wifiUdpInit();  // creates the queue
+
   Serial.println("INIT_START");
+
+  xTaskCreatePinnedToCore(
+    wifiTask,
+    "WiFi-Task",
+    8192,
+    NULL,
+    1,
+    NULL,
+    0   // Core 0
+  );
+
 
   xTaskCreatePinnedToCore(
     imuTask,
@@ -182,6 +196,17 @@ void readIMU(unsigned long timestamp) {
 
     xSemaphoreGive(serialMutex);
   }
+
+      // creating packet
+    IMUPacket packet;
+    packet.timestamp_ms = timestamp;
+    packet.ax = ax / 16384.0f;
+    packet.ay = ay / 16384.0f;
+    packet.az = az / 16384.0f;
+    packet.gx = gx / 131.0f;
+    packet.gy = gy / 131.0f;
+    packet.gz = gz / 131.0f;
+    xQueueSend(imuQueue, &packet, 0);
 }
 
 // ============================================
